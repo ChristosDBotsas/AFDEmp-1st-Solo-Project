@@ -1,0 +1,123 @@
+﻿@using travel;
+
+@{
+    var LoginMessage = "";
+    var db = new Model();
+
+    if (Request.Form["submit1"] != null && IsPost)
+    {
+        var uname = Request["username1"];
+        var pswd = Request["password1"];
+
+
+        var user = db.Users.Where(b => b.Username == uname && b.Password == pswd).FirstOrDefault();
+
+        if (user == null)
+        {
+            LoginMessage = "Username or Password is not correct, try again.";
+        }
+        else
+        {
+            LoginMessage = "Welcome: " + user.First_Name + " " + user.Last_Name;
+            Session["Username"] = user.Username;
+        }
+    }
+    else if (Request.Form["submit2"] != null && IsPost)
+    {
+        var NewUser = new Users
+        {
+            Username = Request["username2"],
+            Password = Request["password2"],
+            First_Name = Request["FirstName"],
+            Last_Name = Request["LastTime"],
+            Birth_Date = DateTime.Parse(Request["BirthDate"]),
+            e_mail = Request["email"],
+            Phone = Request["phone"]
+        };
+
+        db.Users.Add(NewUser);
+        db.SaveChanges();
+
+        LoginMessage = "You have successfully been registered in our website. You can try logging on or register another user";
+    }
+}
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Log in/Register</title>
+    <meta charset="utf-8"/>
+    <link href="~/Styles/Style.css" rel="stylesheet" />
+</head>
+<body>
+    <header class="pageheader">
+        <img src="~/Images/logo-lets-go.png" alt="LetsGo Logo" />
+    </header>
+    <section class="message">
+        <h3>@LoginMessage</h3>
+    </section>
+    <div class="container">
+        <form class="loginform" action="" method="post">
+            <fieldset>
+                <legend>Log In</legend>
+                <ul>
+                    <li>
+                        <label>Username</label>
+                        <input type="text" name="username1" required/>
+                    </li>
+                    <li>
+                        <label>Password</label>
+                        <input type="password" name="password1" required/>
+                    </li>
+                    <li>
+                        <button type="submit" name="submit1">Login</button>
+                    </li>
+                </ul>
+            </fieldset>
+        </form>
+        <form class="registerform" action="" method="post">
+            <fieldset>
+                <legend>Register</legend>
+                <ul>
+                    <li>
+                        <label>Username</label>
+                        <input type="text" name="username2" required/>
+                    </li>
+                    <li>
+                        <label>Password</label>
+                        <input type="password" name="password2" required />
+                    </li>
+                    <li>
+                        <label>First Name</label>
+                        <input type="text" name="FirstName" required/>
+                    </li>
+                    <li>
+                        <label>Last Name</label>
+                        <input type="text" name="LastTime" required/>
+                    </li>
+                    <li>
+                        <label>Birth Date</label>
+                        <input type="date" name="BirthDate" required/>
+                    </li>
+                    <li>
+                        <label>E-Mail</label>
+                        <input type="email" name="email" required/>
+                    </li>
+                    <li>
+                        <label>Phone</label>
+                        <input type="tel" name="phone" required/>
+                    </li>
+                    <li>
+                        <button type="submit" name="submit2">Register</button>
+                    </li>
+                </ul>
+            </fieldset>
+        </form>
+    </div>
+    
+    <footer class="pagefooter">
+        &copy; 2016 Copyright of Let's Go Travel
+    </footer>
+</body>
+</html>
