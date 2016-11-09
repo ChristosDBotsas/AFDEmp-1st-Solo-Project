@@ -19,26 +19,36 @@
         else
         {
             LoginMessage = "Welcome: " + user.First_Name + " " + user.Last_Name;
-            Session["Username"] = user.Username;
         }
     }
     else if (Request.Form["submit2"] != null && IsPost)
     {
-        var NewUser = new Users
+        var uname = Request["username2"];
+        var email = Request["email"];
+
+        var user = db.Users.Where(b => b.Username == uname || b.e_mail == email).FirstOrDefault();
+        if (user == null)
         {
-            Username = Request["username2"],
-            Password = Request["password2"],
-            First_Name = Request["FirstName"],
-            Last_Name = Request["LastTime"],
-            Birth_Date = DateTime.Parse(Request["BirthDate"]),
-            e_mail = Request["email"],
-            Phone = Request["phone"]
-        };
+            var NewUser = new Users
+            {
+                Username = Request["username2"],
+                Password = Request["password2"],
+                First_Name = Request["FirstName"],
+                Last_Name = Request["LastTime"],
+                Birth_Date = DateTime.Parse(Request["BirthDate"]),
+                e_mail = Request["email"],
+                Phone = Request["phone"]
+            };
 
-        db.Users.Add(NewUser);
-        db.SaveChanges();
+            db.Users.Add(NewUser);
+            db.SaveChanges();
 
-        LoginMessage = "You have successfully been registered in our website. You can try logging on or register another user";
+            LoginMessage = "You have successfully been registered in our website. You can try logging on or register another user";
+        }
+        else
+        {
+            LoginMessage = "Username and/or email have already been registered.";
+        }
     }
 }
 
